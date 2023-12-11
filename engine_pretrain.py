@@ -16,7 +16,7 @@ import torch
 
 import util.misc as misc
 import util.lr_sched as lr_sched
-
+import matplotlib.pyplot as plt
 
 def train_one_epoch(model: torch.nn.Module,
                     data_loader: Iterable, optimizer: torch.optim.Optimizer,
@@ -45,7 +45,7 @@ def train_one_epoch(model: torch.nn.Module,
         samples = samples.to(device, non_blocking=True)
 
         with torch.cuda.amp.autocast():
-            loss, _, _ = model(samples, mask_ratio=args.mask_ratio)
+            loss, _pred, _mask = model(samples, mask_ratio=args.mask_ratio)
 
         loss_value = loss.item()
 
@@ -74,6 +74,22 @@ def train_one_epoch(model: torch.nn.Module,
             epoch_1000x = int((data_iter_step / len(data_loader) + epoch) * 1000)
             log_writer.add_scalar('train_loss', loss_value_reduce, epoch_1000x)
             log_writer.add_scalar('lr', lr, epoch_1000x)
+
+
+	""" Below: Naive image logging """
+        if not (data_iter_step%1000 == 1):
+            continue
+
+        unpatched = model.unpatchify(_pred).float()
+    
+        combined = torch.cat([unpatched[0].detach().cpu().T, samples[0].detach().cpu().T], axis=0)
+
+        plt.imshow(combined.detach().cpu())
+        plt.savefig(f'e{epoch}_i{data_iter_step}.png')
+        plt.clf()
+        del combined
+        del unpatched
+        del samples
 
 
     # gather the stats from all processes
