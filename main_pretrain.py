@@ -15,6 +15,7 @@ import numpy as np
 import os
 import time
 from pathlib import Path
+from BioData import BioData
 
 import torch
 import torch.backends.cudnn as cudnn
@@ -49,6 +50,9 @@ def get_args_parser():
 
     parser.add_argument('--input_size', default=224, type=int,
                         help='images input size')
+
+    parser.add_argument('--sequence_length', default=1, type=int,
+                        help='sequence length in frames')
 
     parser.add_argument('--mask_ratio', default=0.75, type=float,
                         help='Masking ratio (percentage of removed patches).')
@@ -105,7 +109,8 @@ def get_args_parser():
 
 
 def main(args):
-    misc.init_distributed_mode(args)
+    #misc.init_distributed_mode(args)
+    args.distributed = False
 
     print('job dir: {}'.format(os.path.dirname(os.path.realpath(__file__))))
     print("{}".format(args).replace(', ', ',\n'))
@@ -119,14 +124,14 @@ def main(args):
 
     cudnn.benchmark = True
 
-    # simple augmentation
-    transform_train = transforms.Compose([
-            transforms.RandomResizedCrop(args.input_size, scale=(0.2, 1.0), interpolation=3),  # 3 is bicubic
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
-    dataset_train = datasets.ImageFolder(os.path.join(args.data_path, 'train'), transform=transform_train)
-    print(dataset_train)
+    train_data_path = os.path.join(args.data_path, 'train')
+
+    # Calculate how much we have to oversample our actual data to match the 1.5M samples per epoch imagenet has
+    _ds = HelaData(train_dir, sequence_length=args.sequence_length)
+    oversampling_factor = 1_500_000 / len(_ds)
+    print("Using oversampling factor", oversampling_factor)
+
+    dataset_train = HelaData(train_dir, sequence_length=args.sequence_length, data_sample=oversampling_factor)
 
     if True:  # args.distributed:
         num_tasks = misc.get_world_size()
