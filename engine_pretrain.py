@@ -76,7 +76,7 @@ def train_one_epoch(model: torch.nn.Module,
             log_writer.add_scalar('lr', lr, epoch_1000x)
 
 
-	""" Below: Naive image logging """
+        """ Below: Naive image logging """
         if not (data_iter_step%1000 == 1):
             continue
 

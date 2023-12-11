@@ -5,6 +5,7 @@ import numpy as np
 from torchvision import transforms
 import random
 import math
+#from helpers import make_grid
 import torchvision.utils as vutils
 
 class FixedTransform():
@@ -104,7 +105,7 @@ class BioData:
         # Convert to a large image
         # MAE patchify is row-by-row so having one column should
         # work naturally for enlargening them
-        grid = vutils.make_grid(stacked, ncol=1, padding=0)
+        grid = vutils.make_grid(stacked, nrow=self.sequence_length, padding=0)
         
         # Return something for y, so we can later easilly pass additional
         # data if the need arises

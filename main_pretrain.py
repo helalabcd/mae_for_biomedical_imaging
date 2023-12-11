@@ -15,7 +15,7 @@ import numpy as np
 import os
 import time
 from pathlib import Path
-from BioData import BioData
+from biodata import BioData
 
 import torch
 import torch.backends.cudnn as cudnn
@@ -127,11 +127,11 @@ def main(args):
     train_data_path = os.path.join(args.data_path, 'train')
 
     # Calculate how much we have to oversample our actual data to match the 1.5M samples per epoch imagenet has
-    _ds = HelaData(train_dir, sequence_length=args.sequence_length)
+    _ds = BioData(train_data_path, sequence_length=args.sequence_length)
     oversampling_factor = 1_500_000 / len(_ds)
     print("Using oversampling factor", oversampling_factor)
 
-    dataset_train = HelaData(train_dir, sequence_length=args.sequence_length, data_sample=oversampling_factor)
+    dataset_train = BioData(train_data_path, sequence_length=args.sequence_length, data_sample=oversampling_factor)
 
     if True:  # args.distributed:
         num_tasks = misc.get_world_size()
