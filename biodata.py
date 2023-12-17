@@ -64,7 +64,7 @@ class BioData:
         for burst in os.listdir(base_dir):
             burst_path = os.path.join(base_dir, burst)
             frames = sorted(os.listdir(burst_path))
-            frames = [os.path.join(base_dir, burst, x) for x in frames if x.endswith('.tiff')]
+            frames = [os.path.join(base_dir, burst, x) for x in frames if x.endswith(('.tiff', '.tif'))]
             self.sequences.append(frames)
             self.sequence_start_indices.append(self.current_start_index)
             self.current_start_index += len(frames) - self.sequence_length
