@@ -125,6 +125,7 @@ def main(args):
     cudnn.benchmark = True
 
     train_data_path = os.path.join(args.data_path, 'train')
+    val_data_path = os.path.join(args.data_path, 'test')
 
     # Calculate how much we have to oversample our actual data to match the 1.5M samples per epoch imagenet has
     _ds = BioData(train_data_path, sequence_length=args.sequence_length)
@@ -132,6 +133,7 @@ def main(args):
     print("Using oversampling factor", oversampling_factor)
 
     dataset_train = BioData(train_data_path, sequence_length=args.sequence_length, data_sample=oversampling_factor)
+    dataset_val = BioData(val_data_path, sequence_length=args.sequence_length)
 
     if True:  # args.distributed:
         num_tasks = misc.get_world_size()
@@ -199,7 +201,8 @@ def main(args):
             log_writer=log_writer,
             args=args
         )
-        if args.output_dir and (epoch % 20 == 0 or epoch + 1 == args.epochs):
+        #if args.output_dir and (epoch % 20 == 0 or epoch + 1 == args.epochs):
+        if True:
             misc.save_model(
                 args=args, model=model, model_without_ddp=model_without_ddp, optimizer=optimizer,
                 loss_scaler=loss_scaler, epoch=epoch)
