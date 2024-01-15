@@ -105,8 +105,7 @@ class BioData:
         # Convert to a large image
         # MAE patchify is row-by-row so having one column should
         # work naturally for enlargening them
-        grid = vutils.make_grid(stacked, nrow=2, padding=0)
-        #print(grid.shape)
+        grid = vutils.make_grid(stacked, nrow=int(math.sqrt(self.sequence_length)), padding=0)
         # Return something for y, so we can later easilly pass additional
         # data if the need arises
         dummy_y =  torch.Tensor([0])
