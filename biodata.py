@@ -62,13 +62,12 @@ class BioData:
         self.data_sample = data_sample
 
         for burst in os.listdir(base_dir):
-            burst_path = os.path.join(base_dir, burst)
+            burst_path = os.path.join(base_dir, burst, "img1")
             frames = sorted(os.listdir(burst_path))
-            frames = [os.path.join(base_dir, burst, x) for x in frames if x.endswith(('.tiff', '.tif'))]
+            frames = [os.path.join(base_dir, burst, "img1", x) for x in frames if x.endswith(('.tiff', '.tif'))]
             self.sequences.append(frames)
             self.sequence_start_indices.append(self.current_start_index)
             self.current_start_index += len(frames) - self.sequence_length
-    
     def __getitem__(self, idx):
 
         if idx > self._real_length():
