@@ -1,0 +1,4 @@
+*.png
+*.out
+**/__pycache__/
+output_dir/
