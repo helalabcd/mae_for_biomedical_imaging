@@ -9,12 +9,13 @@ import math
 import torchvision.utils as vutils
 
 class FixedTransform():
-    def __init__(self, min_angle, max_angle, crop_height, crop_width):
+    def __init__(self, min_angle, max_angle, crop_height, crop_width, target_size):
         # Generate fixed parameters for all transformations
         self.angle = torch.FloatTensor(1).uniform_(min_angle, max_angle).item()
         self.position = None
         self.crop_height = crop_height
         self.crop_width = crop_width
+        self.input_size = target_size
 
     def __call__(self, img):
         # If position hasn't been set, choose a random position
@@ -33,7 +34,8 @@ class FixedTransform():
         transformed_img = transforms.functional.crop(transformed_img, *self.position, self.crop_height, self.crop_width)
 
         # Resize the image to 224x224
-        #transformed_img = transforms.functional.resize(transformed_img, (128, 128))
+        if (self.input_size != self.crop_width) or (self.input_size != self.crop_height):
+            transformed_img = transforms.functional.resize(transformed_img, (input_size, input_size))
         transformed_img = transforms.ToTensor()(transformed_img)
 
         return transformed_img
@@ -53,13 +55,14 @@ class BioData:
     This is useful if you need your epochs to be a certain size, so the hyperparameters
     match up and result in the same number of steps over the loss surface
     """
-    def __init__(self, base_dir="train", sequence_length=1, data_sample=None):
+    def __init__(self, args, base_dir="train", sequence_length=1, data_sample=None):
         self.sequence_length = sequence_length
         self.sequences = []
         self.sequence_start_indices = []
         self.current_start_index = 0
         self.base_dir = base_dir
         self.data_sample = data_sample
+        self.args = args
 
         for burst in os.listdir(base_dir):
             burst_path = os.path.join(base_dir, burst, "img1")
@@ -84,7 +87,7 @@ class BioData:
         # for that and choose a new random crop if that happens.
         out_of_bounds = True
         while out_of_bounds:
-            fixed_transformation = FixedTransform(min_angle=0, max_angle=359, crop_height=64, crop_width=64)
+            fixed_transformation = FixedTransform(min_angle=0, max_angle=359, crop_height=self.args.crop_size, crop_width=self.args.crop_size, target_size=self.args.input_size)
 
             tensors = []
             for file_path in files:

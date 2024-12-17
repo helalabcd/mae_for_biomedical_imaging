@@ -50,6 +50,8 @@ def get_args_parser():
 
     parser.add_argument('--input_size', default=128, type=int,
                         help='images input size')
+    parser.add_argument('--crop_size', default=128, type=int,
+                        help='Size of the crop on the hela pixel images. If != input size, crop will be resized to input_size')
 
     parser.add_argument('--sequence_length', default=1, type=int,
                         help='sequence length in frames')
@@ -128,12 +130,12 @@ def main(args):
     val_data_path = os.path.join(args.data_path, 'test')
 
     # Calculate how much we have to oversample our actual data to match the 1.5M samples per epoch imagenet has
-    _ds = BioData(train_data_path, sequence_length=args.sequence_length)
+    _ds = BioData(args, train_data_path, sequence_length=args.sequence_length)
     oversampling_factor = 1_500_000 / len(_ds)
     print("Using oversampling factor", oversampling_factor)
 
-    dataset_train = BioData(train_data_path, sequence_length=args.sequence_length, data_sample=oversampling_factor)
-    dataset_val = BioData(val_data_path, sequence_length=args.sequence_length)
+    dataset_train = BioData(args, train_data_path, sequence_length=args.sequence_length, data_sample=oversampling_factor)
+    dataset_val = BioData(args, val_data_path, sequence_length=args.sequence_length)
 
     if True:  # args.distributed:
         num_tasks = misc.get_world_size()
@@ -160,7 +162,8 @@ def main(args):
     )
     
     # define the model
-    model = models_mae.__dict__[args.model](norm_pix_loss=args.norm_pix_loss)
+    import math
+    model = models_mae.__dict__[args.model](norm_pix_loss=args.norm_pix_loss, img_size=args.input_size * int(math.sqrt(args.sequence_length)))
 
     model.to(device)
 
