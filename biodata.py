@@ -33,7 +33,7 @@ class FixedTransform():
         transformed_img = transforms.functional.crop(transformed_img, *self.position, self.crop_height, self.crop_width)
 
         # Resize the image to 224x224
-        transformed_img = transforms.functional.resize(transformed_img, (224, 224))
+        #transformed_img = transforms.functional.resize(transformed_img, (128, 128))
         transformed_img = transforms.ToTensor()(transformed_img)
 
         return transformed_img
@@ -99,7 +99,7 @@ class BioData:
                 torch.allclose(ex[:, -1, 0], zero) or \
                 torch.allclose(ex[:, -1, -1], zero)
 
-        stacked = torch.stack(tensors) # torch.Size([n_frames, 1, 224, 224])
+        stacked = torch.stack(tensors) # torch.Size([n_frames, 1, 128, 128])
         
         # Convert to a large image
         # MAE patchify is row-by-row so having one column should
