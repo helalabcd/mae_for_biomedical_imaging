@@ -1,3 +1,12 @@
+| epoch  | num_frames  |  img_size |  lr |  download |
+|---|---|---|---|---|
+| 10  | 1  |  128 |  1e-3 | [mae_seq1_crop128_checkpoint-10.pth](https://dalinghaus.net/request_file.php?f=mae_seq1_crop128_checkpoint-10.pth)  |
+| 20  | 1  |  128 |  1e-3 | [mae_seq1_crop128_checkpoint-20.pth](https://dalinghaus.net/request_file.php?f=mae_seq1_crop128_checkpoint-20.pth)  |
+| 30  | 1  |  128 |  1e-3 | [mae_seq1_crop128_checkpoint-30.pth](https://dalinghaus.net/request_file.php?f=mae_seq1_crop128_checkpoint-30.pth)  |
+| 40  | 1  |  128 |  1e-3 | [mae_seq1_crop128_checkpoint-40.pth](https://dalinghaus.net/request_file.php?f=mae_seq1_crop128_checkpoint-40.pth)  |
+| 50  | 1  |  128 |  1e-3 | [mae_seq1_crop128_checkpoint-50.pth](https://dalinghaus.net/request_file.php?f=mae_seq1_crop128_checkpoint-50.pth)  |
+
+Original README.md below:
 ## Masked Autoencoders: A PyTorch Implementation
 
 <p align="center">
