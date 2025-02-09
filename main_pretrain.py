@@ -48,9 +48,9 @@ def get_args_parser():
     parser.add_argument('--model', default='mae_vit_large_patch16', type=str, metavar='MODEL',
                         help='Name of model to train')
 
-    parser.add_argument('--input_size', default=128, type=int,
+    parser.add_argument('--input_size', default=112, type=int,
                         help='images input size')
-    parser.add_argument('--crop_size', default=128, type=int,
+    parser.add_argument('--crop_size', default=112, type=int,
                         help='Size of the crop on the hela pixel images. If != input size, crop will be resized to input_size')
 
     parser.add_argument('--sequence_length', default=1, type=int,
